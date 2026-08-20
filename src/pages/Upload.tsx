@@ -19,13 +19,37 @@ type UploadResponse = {
 const API_BASE = import.meta.env.VITE_API_BASE_URL || "https://fingenie-backend.vercel.app";
 const ENDPOINT = `${API_BASE}/v1/datasets`;
 
+async function normalizeCsvEncoding(file: File): Promise<File> {
+  if (!file.name.toLowerCase().endsWith(".csv")) return file;
+
+  const bytes = await file.arrayBuffer();
+  const header = new Uint8Array(bytes, 0, Math.min(2, bytes.byteLength));
+  if (header[0] === 0xff && header[1] === 0xfe) {
+    const text = new TextDecoder("utf-16le").decode(bytes);
+    return new File([text], file.name, { type: "text/csv", lastModified: file.lastModified });
+  }
+  if (header[0] === 0xfe && header[1] === 0xff) {
+    const text = new TextDecoder("utf-16be").decode(bytes);
+    return new File([text], file.name, { type: "text/csv", lastModified: file.lastModified });
+  }
+
+  try {
+    new TextDecoder("utf-8", { fatal: true }).decode(bytes);
+    return file;
+  } catch {
+    const text = new TextDecoder("windows-1252").decode(bytes);
+    return new File([text], file.name, { type: "text/csv", lastModified: file.lastModified });
+  }
+}
+
 // --- API call ---
 async function uploadFile(file: File, name?: string): Promise<UploadResponse> {
+  const uploadableFile = await normalizeCsvEncoding(file);
   const fd = new FormData();
-  fd.append("file", file);
+  fd.append("file", uploadableFile);
   if (name) fd.append("name", name);
 
-  console.log("[uploadFile] POST", ENDPOINT, { fileName: file.name, name });
+  console.log("[uploadFile] POST", ENDPOINT, { fileName: uploadableFile.name, name });
 
   let res: Response;
   try {
