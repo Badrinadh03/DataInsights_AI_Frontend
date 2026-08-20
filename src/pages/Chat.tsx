@@ -42,7 +42,7 @@ type GetSessionResponse = {
   message?: string;
 };
 
-const API_BASE = import.meta.env.VITE_API_BASE_URL || "https://fingenie-backend.vercel.app";
+const API_BASE = import.meta.env.VITE_API_BASE_URL;
 const QA_ENDPOINT = `${API_BASE}/v1/qa/answer`;
 
 /* ---------------- utils ---------------- */

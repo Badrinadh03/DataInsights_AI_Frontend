@@ -24,7 +24,7 @@ type CachePayload = {
   suggested_questions: string[];
 };
 
-const API_BASE = "https://fingenie-backend.vercel.app";
+const API_BASE = import.meta.env.VITE_API_BASE_URL;
 const makeCacheKey = (datasetId: string, schemaSheet: string, k: number) =>
   `auto_insights::${datasetId}::${schemaSheet || "<none>"}::${k}`;
 

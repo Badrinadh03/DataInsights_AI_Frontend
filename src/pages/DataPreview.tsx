@@ -19,7 +19,7 @@ type PreviewResponse = {
   error?: string;
 };
 
-const API_BASE = import.meta.env.VITE_API_BASE_URL || "https://fingenie-backend.vercel.app";
+const API_BASE = import.meta.env.VITE_API_BASE_URL;
 
 const inferType = (v: any): string => {
   if (v === null || v === undefined) return "Null";

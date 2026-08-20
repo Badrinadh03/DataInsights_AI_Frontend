@@ -17,7 +17,7 @@ type SessionListItem = {
   message_count: number;
 };
 
-const API_BASE = import.meta.env.VITE_API_BASE_URL || "https://fingenie-backend.vercel.app";
+const API_BASE = import.meta.env.VITE_API_BASE_URL;
 
 const uid = () =>
   (typeof crypto !== "undefined" && "randomUUID" in crypto

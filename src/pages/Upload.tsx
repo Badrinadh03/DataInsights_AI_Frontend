@@ -16,7 +16,7 @@ type UploadResponse = {
   error?: string;
 };
 
-const API_BASE = import.meta.env.VITE_API_BASE_URL || "https://fingenie-backend.vercel.app";
+const API_BASE = import.meta.env.VITE_API_BASE_URL;
 const ENDPOINT = `${API_BASE}/v1/datasets`;
 
 async function normalizeCsvEncoding(file: File): Promise<File> {
