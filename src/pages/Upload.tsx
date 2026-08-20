@@ -90,6 +90,19 @@ async function uploadFile(file: File, name?: string): Promise<UploadResponse> {
   return body;
 }
 
+function saveDatasetHandle(data: UploadResponse, datasetName: string): string {
+  const datasetId = data.dataset_id != null ? String(data.dataset_id) : "";
+  const dbPath = data.db_path || datasetId;
+  const handle = datasetId || dbPath || (data.id != null ? String(data.id) : "");
+
+  if (!handle) throw new Error("Upload succeeded but no dataset handle was returned");
+
+  localStorage.setItem("dataset_id", datasetId || handle);
+  localStorage.setItem("db_path", dbPath || handle);
+  if (datasetName.trim()) localStorage.setItem("dataset_name", datasetName.trim());
+  return handle;
+}
+
 export default function Upload() {
   const [file, setFile] = useState<File | null>(null);
   const [datasetName, setDatasetName] = useState("");
@@ -115,14 +128,8 @@ export default function Upload() {
       toast({ title: "Uploading file...", description: f.name });
 
       const data = await uploadFile(f, datasetName);
-      const idOrPath =
-        (data.db_path as string) ??
-        (data.dataset_id != null ? String(data.dataset_id) : undefined) ??
-        (data.id != null ? String(data.id) : undefined);
+      const idOrPath = saveDatasetHandle(data, datasetName);
 
-      if (!idOrPath) throw new Error("Upload succeeded but returned no handle");
-
-      localStorage.setItem("db_path", idOrPath);
       setHandleValue(idOrPath);
       setUploaded(true); // ✅ flip visuals now
 
@@ -155,14 +162,8 @@ export default function Upload() {
       toast({ title: "Uploading file...", description: file.name });
 
       const data = await uploadFile(file, datasetName);
-      const idOrPath =
-        (data.db_path as string) ??
-        (data.dataset_id != null ? String(data.dataset_id) : undefined) ??
-        (data.id != null ? String(data.id) : undefined);
+      const idOrPath = saveDatasetHandle(data, datasetName);
 
-      if (!idOrPath) throw new Error("Upload succeeded but returned no handle");
-
-      localStorage.setItem("db_path", idOrPath);
       setHandleValue(idOrPath);
       setUploaded(true);
 

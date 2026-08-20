@@ -47,7 +47,10 @@ const DataPreview = () => {
   const [columns, setColumns] = useState<string[]>([]);
 
   // Fallback to localStorage if route param not present
-  const resolvedId = useMemo(() => dsId || localStorage.getItem("db_path") || "", [dsId]);
+  const resolvedId = useMemo(
+    () => dsId || localStorage.getItem("dataset_id") || localStorage.getItem("db_path") || "",
+    [dsId]
+  );
 
   useEffect(() => {
     let isMounted = true;
